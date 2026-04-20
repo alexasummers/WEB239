@@ -1,0 +1,53 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Classes API Demo</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 2rem;
+    }
+    h1 {
+      margin-bottom: 1rem;
+    }
+    ul {
+      padding-left: 1.2rem;
+    }
+    li {
+      margin-bottom: 0.5rem;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>College Classes</h1>
+  <button id="loadClasses">Load Classes</button>
+
+  <ul id="classList"></ul>
+
+  <script>
+    const button = document.getElementById("loadClasses");
+    const classList = document.getElementById("classList");
+
+    button.addEventListener("click", () => {
+      fetch("http://localhost:3000/api/classes")
+        .then(response => response.json())
+        .then(classes => {
+          classList.innerHTML = "";
+
+          classes.forEach(c => {
+            const li = document.createElement("li");
+            li.textContent = `${c.name} (${c.credits} credits)`;
+            classList.appendChild(li);
+          });
+        })
+        .catch(error => {
+          console.error("Error:", error);
+        });
+    });
+  </script>
+
+</body>
+</html>
