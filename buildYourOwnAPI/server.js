@@ -1,0 +1,33 @@
+const express = require("express");
+const app = express();
+
+const PORT = 3000;
+
+
+const classes = [
+  { id: 1, name: "Intro to Web Development", credits: 3 },
+  { id: 2, name: "Digital Media Fundamentals", credits: 4 },
+  { id: 3, name: "Intro to APIs", credits: 3 }
+];
+
+
+app.get("/api/classes", (req, res) => {
+  res.json(classes);
+});
+
+
+app.get("/api/classes/:id", (req, res) => {
+  const classId = parseInt(req.params.id);
+  const foundClass = classes.find(c => c.id === classId);
+
+  if (!foundClass) {
+    return res.status(404).json({ message: "Class not found" });
+  }
+
+  res.json(foundClass);
+});
+
+
+app.listen(PORT, () => {
+  console.log(`Server running on http://localhost:${PORT}`);
+});
