@@ -1,0 +1,111 @@
+------------------------------------------------------------------------------
+Command line: 
+------------------------------------------------------------------------------
+
+mkdir classes-api
+cd classes-api
+npm init -y
+npm install express
+type nul > server.js
+
+-------------------------------------------------------------------------------
+Open server.js and input:
+------------------------------------------------------------------------------
+const express = require("express");
+const app = express();
+
+const PORT = 3000;
+
+app.listen(PORT, () => {
+  console.log(`Server running on http://localhost:${PORT}`);
+});
+
+------------------------------------------------------------------------------
+In command line, put: node server.js
+Go to http://localhost:3000, which won't work.
+Go back to server.js and add above app.listen:
+------------------------------------------------------------------------------
+
+const classes = [
+  { id: 1, name: "Intro to Web Development", credits: 3 },
+  { id: 2, name: "Digital Media Fundamentals", credits: 4 },
+  { id: 3, name: "Intro to APIs", credits: 3 }
+];
+
+
+app.get("/api/classes", (req, res) => {
+  res.json(classes);
+})
+
+------------------------------------------------------------------------------
+In command line, do ctrl + C to stop the server. Then, run node server.js to start the server again.
+Go to http://localhost:3000/api/classes
+In command liine, do ctrl + C to stop the server.
+Go back to server.js and add above app.listen:
+------------------------------------------------------------------------------
+
+app.get("/api/classes/:id", (req, res) => {
+  const classId = parseInt(req.params.id);
+  const foundClass = classes.find(c => c.id === classId);
+
+  if (!foundClass) {
+    return res.status(404).json({ message: "Class not found" });
+  }
+
+  res.json(foundClass);
+});
+
+----------------------------------------------------------------------------
+In command line, run node server.js to start the server again.
+Go to http://localhost:3000/api/classes/2 (will work)
+Then go to http://localhost:3000/api/classes/99 (will not work).
+In command line,  do ctrl + C to stop the server, and run: type nul > index.html
+Go into index.html:
+----------------------------------------------------------------------------
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Classes API Demo</title>
+</head>
+<body>
+
+  <h1>College Classes</h1>
+  <button id="loadClasses">Load Classes</button>
+
+  <ul id="classList"></ul>
+
+  <script>
+    const button = document.getElementById("loadClasses");
+    const classList = document.getElementById("classList");
+
+    button.addEventListener("click", () => {
+      fetch("http://localhost:3000/api/classes")
+        .then(response => response.json())
+        .then(classes => {
+          classList.innerHTML = "";
+
+          classes.forEach(c => {
+            const li = document.createElement("li");
+            li.textContent = `${c.name} (${c.credits} credits)`;
+            classList.appendChild(li);
+          });
+        })
+        .catch(error => {
+          console.error("Error:", error);
+        });
+    });
+  </script>
+
+</body>
+</html>
+
+----------------------------------------------------------------------------
+In command line, run node server.js to start the server again.
+Open index.html in the browser. Click the button, it will give an error about CORS.
+In command line, do ctrl + C to stop the server. Run npm install cors.
+Then, open server.js and add " const cors = require("cors"); " to the very top right under requiring express, and right above my first app.get, add " app.use(cors()); ".
+In command line, run node server.js to start the server again. Click the button-- it should work.
+----------------------------------------------------------------------------
